@@ -10,9 +10,9 @@ import random
 from torchvision.utils import save_image
 import os
 
-# -----------------------------
+
 # 1) Memory-Optimized Model with explicit use_reentrant
-# -----------------------------
+
 class MetaSmoothResNet9(nn.Module):
     def __init__(self, num_classes=10, width_multiplier=2.0,
                  init_scale=2.0, final_scale=0.125):
@@ -72,9 +72,9 @@ class MetaSmoothResNet9(nn.Module):
         x = torch.utils.checkpoint.checkpoint(segment2, x, use_reentrant=False)
         return self.classifier(x)
 
-# -----------------------------
+
 # 2) Memory-Efficient ReplayManager
-# -----------------------------
+
 class ReplayManager:
     def __init__(self, model, optimizer, total_steps, k, dataset, batch_size, device):
         self.model = model
@@ -118,9 +118,9 @@ class ReplayManager:
                     self.active_path.add(seg_start)
                 break
 
-# -----------------------------
+
 # _replay_segment Method Fix (Remove torch.no_grad)
-# -----------------------------
+
     def _replay_segment(self, seg_start, seg_len, criterion):
         m_state, o_state = self.checkpoints[seg_start]
 
@@ -171,9 +171,9 @@ class ReplayManager:
 
         return total_loss
 
-# -----------------------------
+
 # Modified ReplayManager Methods
-# -----------------------------
+
     def compute_metagrad(self, val_batch, criterion, poison_imgs):
         xi, yi = [t.to(self.dev) for t in val_batch]
 
@@ -231,9 +231,9 @@ class ReplayManager:
 
         return z_meta
 
-# -----------------------------
+
 # 3) Optimized Poisoning Pipeline
-# -----------------------------
+
 def run_mgd_poisoning(epsilon=0.025, meta_steps=50, inner_epochs=12
                       ,
                      poison_lr=0.01, k=2, batch_size=250, model_ckpt='resnet9.pth'):
@@ -373,30 +373,3 @@ if __name__ == '__main__':
     run_mgd_poisoning()
     
     
-    Clean model accuracy: 90.96%
-
-Meta Step 1/50
-Current test accuracy: 89.11%
-New worst model saved (acc: 89.11%)
-Saved 1000 poisoned samples
-
-Meta Step 2/50
-Current test accuracy: 88.74%
-New worst model saved (acc: 88.74%)
-Saved 1000 poisoned samples
-
-Meta Step 3/50
-Current test accuracy: 89.13%
-
-Meta Step 4/50
-Current test accuracy: 88.35%
-New worst model saved (acc: 88.35%)
-Saved 1000 poisoned samples
-
-Meta Step 5/50
-Current test accuracy: 88.34%
-New worst model saved (acc: 88.34%)
-Saved 1000 poisoned samples
-
-Meta Step 6/50
-Current test accuracy: 88.56%

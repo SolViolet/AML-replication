@@ -2,6 +2,10 @@
 
 ## train.py
 train a resnet-9 model with meta smooth parameters and saves the model.
+run this file with:
+pip install torch torchvision torchaudio
+pip install matplotlib
+python train.py
 
 ## model_test.py
 tests the modified resnet-9 model on clean CIFAR10 data.
